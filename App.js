@@ -29,10 +29,7 @@ export default function App() {
                 400: '#d97706',
             },
         },
-        config: {
-            // Changing initialColorMode to 'dark'
-            initialColorMode: 'dark',
-        },
+
     });
     return (<NativeBaseProvider theme={theme}>
             <NavigationContainer>
