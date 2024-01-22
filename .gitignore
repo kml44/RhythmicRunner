@@ -8,7 +8,7 @@ node_modules/
 dist/
 web-build/
 .idea
-
+Utils/SpotifyCredentials.js
 # Native
 *.orig.*
 *.jks
@@ -34,3 +34,6 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+!/.gitignore
+!/.gitignore
+!/Utils/SpotifyCredentials.js
