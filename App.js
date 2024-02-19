@@ -3,7 +3,9 @@ import {SafeAreaView} from "react-native";
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import HomeScreen from "./Screens/HomeScreen";
-import {extendTheme, NativeBaseProvider} from "native-base"; // Optional if you want to use default theme
+import {extendTheme, NativeBaseProvider} from "native-base";
+import {WebView} from "react-native-webview";
+import WebViewScreen from "./Screens/WebViewScreen"; // Optional if you want to use default theme
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +37,7 @@ export default function App() {
             <NavigationContainer>
                 <Stack.Navigator>
                     <Stack.Screen name="Home" component={HomeScreen} options={{}}/>
+                    <Stack.Screen name="WebView" component={WebViewScreen} options={{}}/>
                 </Stack.Navigator>
             </NavigationContainer>
         </NativeBaseProvider>
