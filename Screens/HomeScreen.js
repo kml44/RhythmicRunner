@@ -1,7 +1,7 @@
 import * as DocumentPicker from "expo-document-picker"
 import React, {useEffect, useRef, useState} from "react";
 import * as ExpoFileSystem from 'expo-file-system'
-import {Button, Flex, ScrollView} from "native-base";
+import {Badge, Button, Flex, ScrollView} from "native-base";
 import {parse} from "../Utils/Parse";
 import {calculateElevationDiff} from "../Utils/CalculateElevationDiff";
 import calculateRouteGradient from "../Utils/CalculateRouteGradient";
@@ -89,10 +89,11 @@ export default ({navigation, route }) => {
         }
     }, [route.params?.token]);
 
-    function handleMusicPlay() {
-        findSong(140, 150, token).then(song_uri => {
+    async function handleMusicPlay() {
+        /*findSong(140, 150, token).then(song_uri => {
             if (song_uri != null) playSong(song_uri, 5000, token)
-        })
+        })*/
+        await findAndPlaySong(tempo[0])
         setLocation([])
         setStartedRunning(true)
     }
@@ -102,7 +103,26 @@ export default ({navigation, route }) => {
             tempo[i] = 3 * gradients[i] + 150
         }
     }
+    const findAndPlaySong = async (targetTempo) => {
+        let error = 13;
 
+        let song = null;
+        while (!song) {
+            const lowerTempo = targetTempo - error;
+
+            const upperTempo = targetTempo + error;
+
+            song = await findSong(lowerTempo, upperTempo, token);
+            if (song) {
+                playSong(song.uri, 0, token);
+                console.log(song.uri);
+                trackDuration = song.duration;
+            } else {
+                error += 1;
+            }
+        }
+
+    };
     useEffect(() => {
         let interval = null;
         let tempo_index = 0
@@ -110,26 +130,7 @@ export default ({navigation, route }) => {
         if (startedRunning) {
             let nextDistance = 0;
 
-            const findAndPlaySong = async (targetTempo) => {
-                let error = 3;
 
-                let song = null;
-                while (!song) {
-                    const lowerTempo = targetTempo - error;
-
-                    const upperTempo = targetTempo + error;
-
-                    song = await findSong(lowerTempo, upperTempo, token);
-                    if (song) {
-                        playSong(song.uri, 0, token);
-                        console.log(song.uri);
-                        trackDuration = song.duration;
-                    } else {
-                        error += 1;
-                    }
-                }
-
-            };
             interval = setInterval(async () => {
                 trackTime += 1000;
 
@@ -156,11 +157,14 @@ export default ({navigation, route }) => {
                 <ScrollView
                     horizontal={true}
                 >
-                    <GradientChart chartData={chartData}/>
+                    {chartData ? <GradientChart chartData={chartData}/> : <></>}
                 </ScrollView>
 
             </ScrollView>
-            {distance}
+            <Badge colorScheme="warning" alignSelf="start">
+                Distance: {distance}
+            </Badge>
+
             <Button mt={1} onPress={() => {
                 navigation.navigate('WebView');
             }}>Redirect To WebView</Button>
